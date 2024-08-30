@@ -40,5 +40,5 @@ sportsTwo.push("Basketball");
 sportsTwo.push("Futboll");
 
 for (let tempSports of sportsTwo) {
-    console.log(tempSports);
+    console.log(tempSports); 
 }
