@@ -1,0 +1,7 @@
+tr.highlight-true td {
+    background-color: green;
+}
+
+tr.highlight-false td {
+    background-color: red;
+}
