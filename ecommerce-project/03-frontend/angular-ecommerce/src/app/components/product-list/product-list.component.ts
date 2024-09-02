@@ -12,7 +12,7 @@ export class ProductListComponent implements OnInit{
 
   products: Product[] = [];
   currenctCategoryId: number = 1;
-
+  currenctCategoryName: string = "";
   constructor(private productService: ProductService,
               private route: ActivatedRoute 
   ) {}
@@ -21,9 +21,11 @@ export class ProductListComponent implements OnInit{
     const hasCategoryId: boolean = this.route.snapshot.paramMap.has('id');
     if(hasCategoryId){
       this.currenctCategoryId =+ this.route.snapshot.paramMap.get('id')!;
+      this.currenctCategoryName = this.route.snapshot.paramMap.get('name')!;
     }
     else {
       this.currenctCategoryId = 1;
+      this.currenctCategoryName = "Books";
     }
     this.productService.getProductList(this.currenctCategoryId).subscribe(
       d => {
