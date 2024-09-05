@@ -13,7 +13,13 @@ export class ProductListComponent implements OnInit{
   products: Product[] = [];
   currenctCategoryId: number = 1;
   currenctCategoryName: string = "";
+  previousCategoryId: number = 1;
   searchMode: boolean = false;
+  thePageNumber: number = 1;
+  thePageSize: number = 5;
+  theTotalElements: number = 0;
+  previousKeyword: string = "";
+
   constructor(private productService: ProductService,
               private route: ActivatedRoute 
   ) {}
@@ -30,10 +36,15 @@ export class ProductListComponent implements OnInit{
 
   handleSearchProducts() {
     const theKeywords: string = this.route.snapshot.paramMap.get('keyword')!;
-    this.productService.searchProducts(theKeywords).subscribe(
-      d => {
-        this.products = d;
-      }
+    if(this.previousKeyword != theKeywords) {
+      this.thePageNumber = 1;
+    }
+
+    this.previousKeyword = theKeywords;
+
+    this.productService.searchProductsPaginate(this.thePageNumber -1, this.thePageSize, theKeywords
+    ).subscribe(
+      this.proccessResult()
     )
 
   }
@@ -48,11 +59,30 @@ export class ProductListComponent implements OnInit{
       this.currenctCategoryId = 1;
       this.currenctCategoryName = "Books";
     }
-    this.productService.getProductList(this.currenctCategoryId).subscribe(
-      d => {
-        this.products = d;
-      }
-    )
+
+    if (this.previousCategoryId != this.currenctCategoryId){
+      this.thePageNumber = 1;
+    }
+    this.previousCategoryId = this.currenctCategoryId;
+
+
+    this.productService.getProductListPaginate(this.thePageNumber - 1, this.thePageSize, this.currenctCategoryId)
+    .subscribe(this.proccessResult());
+  }
+
+  updatePageSize(pageSize: string) {
+    this.thePageSize =+ pageSize;
+    this.thePageNumber = 1;
+    this.listProducts();
+  }
+
+  proccessResult(){
+    return (data: any) => {
+      this.products = data._embedded.products;
+      this.thePageNumber = data.page.number + 1;
+      this.thePageSize = data.page.size;
+      this.theTotalElements = data.page.totalElements;
+    }
   }
 
   ngOnInit(): void {
