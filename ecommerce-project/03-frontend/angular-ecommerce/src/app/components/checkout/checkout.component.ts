@@ -5,6 +5,11 @@ import { Country } from '../../common/country';
 import { State } from '../../common/state';
 import { Luv2ShopValidators } from '../../validators/luv2-shop-validators';
 import { CartService } from '../../services/cart.service';
+import { CheckoutService } from '../../services/checkout.service';
+import { Router } from '@angular/router';
+import { Order } from '../../common/order';
+import { OrderItem } from '../../common/order-item';
+import { Purchase } from '../../common/purchase';
 
 @Component({
   selector: 'app-checkout',
@@ -28,7 +33,9 @@ export class CheckoutComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private luv2ShopFormService: Luv2ShopFormServiceService,
-              private cartService: CartService
+              private cartService: CartService,
+              private checkoutService: CheckoutService,
+              private router: Router
               
   ) {
 
@@ -158,14 +165,66 @@ export class CheckoutComponent implements OnInit {
 
     if (this.checkoutFormGroup.invalid) {
       this.checkoutFormGroup.markAllAsTouched();
+      return;
     }
 
-    console.log(this.checkoutFormGroup.get('customer')!.value);
-    console.log(this.checkoutFormGroup.get('customer')!.value.email);
-    console.log("***");
-    console.log(this.checkoutFormGroup.get('shippingAddress')!.value.country.name);
-    console.log(this.checkoutFormGroup.get('shippingAddress')!.value.state.name);
+    // set up order
+    let order = new Order();
+    order.totalPrice = this.totalPrice;
+    order.totalQuantity = this.totalQuantity;
+    // get cart items
+    const cartItems = this.cartService.cartItems;
+    // create orderItems from cartItems
+    // - Long way
 
+    // let orderItems : OrderItem[] = [];
+    // for(let i = 0; i < cartItems.length; i++){
+    //   orderItems[i] = new OrderItem(cartItems[i]);
+    // }
+
+    // - Short way
+    let orderItems : OrderItem[] = cartItems.map(c => new OrderItem(c));
+
+    // set up purchase
+    let purchase = new Purchase();
+
+    // populate purchase - customer
+    purchase.customer = this.checkoutFormGroup.controls['customer'].value;
+    // populate purchase - shippingADdress
+    purchase.shippingAddress = this.checkoutFormGroup.controls['shippingAddress'].value;
+    const shippingState: State = JSON.parse(JSON.stringify(purchase.shippingAddress.state));
+    const shippingCountry: Country = JSON.parse(JSON.stringify(purchase.shippingAddress.country));
+    purchase.shippingAddress.state = shippingState.name;
+    purchase.shippingAddress.country = shippingCountry.name;
+    // populate purchase - billingAddress
+    purchase.billingAddress = this.checkoutFormGroup.controls['billingAddress'].value;
+    const billingState: State = JSON.parse(JSON.stringify(purchase.billingAddress.state));
+    const billingCountry: Country = JSON.parse(JSON.stringify(purchase.billingAddress.country));
+    purchase.billingAddress.state = billingState.name;
+    purchase.billingAddress.country = billingCountry.name;
+    // populate purchase - order and orderItems
+    purchase.order = order;
+    purchase.orderItems = orderItems;
+    // call RESTAPI via the CheckoutService
+    this.checkoutService.placeOrder(purchase).subscribe(
+      {
+        next: r => {
+          alert(`Your order has been received. Order Tracking Number: ${r.orderTrackingNumber}`);
+          this.resetCart();
+        },
+        error: ex => {
+          alert("There was an error: " + ex.message);
+        }
+      }
+    );
+  }
+
+  resetCart() {
+    this.cartService.cartItems = [];
+    this.cartService.totalPrice.next(0);
+    this.cartService.totalQuantity.next(0);
+    this.checkoutFormGroup.reset();
+    this.router.navigateByUrl("/products");
   }
 
   copyShippingAddressToBillingAddress(event: any) {

@@ -96,6 +96,9 @@
                                     <div *ngIf="shippingAddressStreet?.errors?.['required'] || shippingAddressStreet?.errors?.['notOnlyWhiteSpace']">
                                         Street is required
                                     </div>
+                                    <div *ngIf="shippingAddressStreet?.errors?.['minlength']">
+                                        Street must be at least 2 characters are required
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -200,6 +203,9 @@
                                 <div *ngIf="billingAddressStreet?.invalid && (billingAddressStreet?.dirty || billingAddressStreet?.touched)" class="alert alert-danger mt-1">
                                     <div *ngIf="billingAddressStreet?.errors?.['required'] || billingAddressStreet?.errors?.['notOnlyWhiteSpace']">
                                         Street is required
+                                    </div>
+                                    <div *ngIf="billingAddressStreet?.errors?.['minlength']">
+                                        Street must be at least 2 characters are required
                                     </div>
                                 </div>
                             </div>
