@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { OKTA_AUTH, OktaAuthStateService } from '@okta/okta-angular';
 import { OktaAuth } from '@okta/okta-auth-js';
 
@@ -13,7 +14,8 @@ export class LoginStatusComponent implements OnInit{
   userFullName: string = '';
 
   constructor(private oktaAuthService: OktaAuthStateService,
-              @Inject(OKTA_AUTH) private oktaAuth: OktaAuth
+              @Inject(OKTA_AUTH) private oktaAuth: OktaAuth,
+              private router : Router
   ) {}
 
   ngOnInit(): void {
@@ -41,10 +43,17 @@ export class LoginStatusComponent implements OnInit{
     // this.oktaAuth.signOut();
     alert("Good bye champ :(");
     this.isAuthenticated = false;
+    this.router.navigate(['/products']);
   }
 
   login(){
     alert("Welcome back champ :)");
     this.isAuthenticated = true;
+    this.router.navigate(['/products']);
+  }
+
+  navigateToMembers() {
+    // Navigate to /members with isAuthenticated as a query parameter
+    this.router.navigate(['/members'], { queryParams: { isAuthenticated: this.isAuthenticated } });
   }
 }
