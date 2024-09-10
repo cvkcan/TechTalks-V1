@@ -27,19 +27,23 @@ export class LoginComponent implements OnInit{
     });
   }
 
+  // ngOnInit(): void {
+  //   this.oktaSignin.remove();
+  //   this.oktaSignin.renderEl({
+  //     el: '#okta-sign-in-widget'}, //login.componentte tanımlana id degeri ile aynı olmalıdır.
+  //     (r: any) => {
+  //       if (r.status === "SUCCESS"){
+  //         this.oktaAuth.signInWithRedirect();
+  //       }
+  //     },
+  //     (err: any) => {
+  //       throw err;
+  //     }
+  //   );
+  // }
+
   ngOnInit(): void {
-    this.oktaSignin.remove();
-    this.oktaSignin.renderEl({
-      el: '#okta-sign-in-widget'}, //login.componentte tanımlana id degeri ile aynı olmalıdır.
-      (r: any) => {
-        if (r.status === "SUCCESS"){
-          this.oktaAuth.signInWithRedirect();
-        }
-      },
-      (err: any) => {
-        throw err;
-      }
-    );
+    
   }
 
 }

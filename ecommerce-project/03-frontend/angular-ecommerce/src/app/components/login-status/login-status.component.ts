@@ -38,6 +38,13 @@ export class LoginStatusComponent implements OnInit{
 
   logout(){
     //Terminate session with okta and remove tokens
-    this.oktaAuth.signOut();
+    // this.oktaAuth.signOut();
+    alert("Good bye champ :(");
+    this.isAuthenticated = false;
+  }
+
+  login(){
+    alert("Welcome back champ :)");
+    this.isAuthenticated = true;
   }
 }
