@@ -13,6 +13,8 @@ export class LoginStatusComponent implements OnInit{
   isAuthenticated: boolean = false;
   userFullName: string = '';
 
+  storage: Storage = sessionStorage;
+
   constructor(private oktaAuthService: OktaAuthStateService,
               @Inject(OKTA_AUTH) private oktaAuth: OktaAuth,
               private router : Router
@@ -20,21 +22,24 @@ export class LoginStatusComponent implements OnInit{
 
   ngOnInit(): void {
     // Subscrive to authentication state changes
-    this.oktaAuthService.authState$.subscribe(
-      (result) => {
-        this.isAuthenticated = result.isAuthenticated!;
-        this.getUserDetails();
-      }
-    );
+    // this.oktaAuthService.authState$.subscribe(
+    //   (result) => {
+    //     this.isAuthenticated = result.isAuthenticated!;
+    //     this.getUserDetails();
+    //   }
+    // );
   }
 
   getUserDetails() {
     if(this.isAuthenticated){
-      this.oktaAuth.getUser().then(
-        (res) => {
-          this.userFullName = res.name as string;
-        }
-      )
+      // this.oktaAuth.getUser().then(
+      //   (res) => {
+      //     this.userFullName = res.name as string;
+      //   }
+      // )
+
+      this.storage.setItem('userEmail','john.doe@luv2code.com');
+
     }
   }
 
@@ -49,11 +54,16 @@ export class LoginStatusComponent implements OnInit{
   login(){
     alert("Welcome back champ :)");
     this.isAuthenticated = true;
+    this.getUserDetails();
     this.router.navigate(['/products']);
   }
 
   navigateToMembers() {
     // Navigate to /members with isAuthenticated as a query parameter
     this.router.navigate(['/members'], { queryParams: { isAuthenticated: this.isAuthenticated } });
+  }
+
+  navigateToOrderHistory(){
+    this.router.navigate(['/order-history'], { queryParams: { isAuthenticated: this.isAuthenticated } });
   }
 }

@@ -1,9 +1,6 @@
 package com.techtalks.ecommerce.config;
 
-import com.techtalks.ecommerce.entity.Country;
-import com.techtalks.ecommerce.entity.Product;
-import com.techtalks.ecommerce.entity.ProductCategory;
-import com.techtalks.ecommerce.entity.State;
+import com.techtalks.ecommerce.entity.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +37,7 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
         disableHttpMethods(ProductCategory.class,config, theUnsupportedActions);
         disableHttpMethods(State.class,config, theUnsupportedActions);
         disableHttpMethods(Country.class,config, theUnsupportedActions);
+        disableHttpMethods(Order.class,config, theUnsupportedActions);
         exposeIds(config);
 
         cors.addMapping(config.getBasePath() + "/**").allowedOrigins(theAllowedOrigins);
