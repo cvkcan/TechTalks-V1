@@ -33,10 +33,10 @@ function sendToLoginPage(oktaAuth: OktaAuth, injector: Injector){
 const oktaConfig = myAppConfig.oidc;
 const oktaAuth = new OktaAuth(oktaConfig);
 const routes: Routes = [
-  // {path: 'members', component: MembersPageComponent, canActivate:[OktaAuthGuard],
-  //   data: {onAuthRequired: sendToLoginPage }}, // Okta çalışmadığı için kullanılmayacaktır.
-  {path: 'order-history', component: OrderHistoryComponent}, //Bu route kullanılacaktır.
-  {path: 'members', component: MembersPageComponent}, //Bu route kullanılacaktır.
+  {path: 'members', component: MembersPageComponent, canActivate:[OktaAuthGuard],
+    data: {onAuthRequired: sendToLoginPage }}, // Okta çalışmadığı için kullanılmayacaktır.
+  // {path: 'order-history', component: OrderHistoryComponent}, //Bu route kullanılacaktır.
+  // {path: 'members', component: MembersPageComponent}, //Bu route kullanılacaktır.
   {path: 'login/callback', component: OktaCallbackComponent},
   {path: 'login', component: LoginComponent},
   {path: 'checkout', component: CheckoutComponent},

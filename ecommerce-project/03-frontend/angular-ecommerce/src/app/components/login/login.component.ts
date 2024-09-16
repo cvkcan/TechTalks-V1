@@ -9,11 +9,12 @@ import myAppConfig from '../../config/my-app-config';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit {
 
   oktaSignin: any;
 
-  constructor (@Inject(OKTA_AUTH) private oktaAuth: OktaAuth) {
+  constructor(@Inject(OKTA_AUTH) private oktaAuth: OktaAuth) {
+
     this.oktaSignin = new OktaSignIn({
       logo: 'assets/images/logo.png',
       baseUrl: myAppConfig.oidc.issuer.split('/oauth2')[0],
@@ -25,25 +26,22 @@ export class LoginComponent implements OnInit{
         scopes: myAppConfig.oidc.scopes
       }
     });
-  }
-
-  // ngOnInit(): void {
-  //   this.oktaSignin.remove();
-  //   this.oktaSignin.renderEl({
-  //     el: '#okta-sign-in-widget'}, //login.componentte tanımlana id degeri ile aynı olmalıdır.
-  //     (r: any) => {
-  //       if (r.status === "SUCCESS"){
-  //         this.oktaAuth.signInWithRedirect();
-  //       }
-  //     },
-  //     (err: any) => {
-  //       throw err;
-  //     }
-  //   );
-  // }
+   }
 
   ngOnInit(): void {
-    
+    this.oktaSignin.remove();
+
+    this.oktaSignin.renderEl({
+      el: '#okta-sign-in-widget'}, // this name should be same as div tag id in login.component.html
+      (response: any) => {
+        if (response.status === 'SUCCESS') {
+          this.oktaAuth.signInWithRedirect();
+        }
+      },
+      (error: any) => {
+        throw error;
+      }
+    );
   }
 
 }
