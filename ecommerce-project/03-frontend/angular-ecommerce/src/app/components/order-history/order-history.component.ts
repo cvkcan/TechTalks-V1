@@ -21,10 +21,13 @@ export class OrderHistoryComponent implements OnInit{
   }
 
   handleOrderHistory() {
-    const theEmail = this.storage.getItem('userEmail')!;
+
+    // read the user's email address from browser storage
+    const theEmail = JSON.parse(this.storage.getItem('userEmail')!);
+    // retrieve data from the service
     this.orderHistoryService.getOrderHistory(theEmail).subscribe(
-      d => {
-        this.orderHistoryList = d._embedded.orders;
+      data => {
+        this.orderHistoryList = data._embedded.orders;
       }
     );
   }

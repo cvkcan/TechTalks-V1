@@ -11,6 +11,10 @@ export class ProductCategoryMenuComponent implements OnInit {
   
   productCategories: ProductCategory[] = [];
 
+  constructor(private productService: ProductService){
+
+  }
+
   listProductCategories() {
     this.productService.getProductCategories().subscribe(
       d => {
@@ -24,8 +28,6 @@ export class ProductCategoryMenuComponent implements OnInit {
     this.listProductCategories();
   }
 
-  constructor(private productService: ProductService){
-
-  }
+  
 
 }

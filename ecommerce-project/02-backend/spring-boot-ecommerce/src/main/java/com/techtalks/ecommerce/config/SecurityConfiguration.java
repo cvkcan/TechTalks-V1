@@ -17,7 +17,7 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("https://dev-29899562.okta.com/oauth2/default");
+        return JwtDecoders.fromIssuerLocation("https://dev-88760769.okta.com/oauth2/default");
     }
 
     @Bean

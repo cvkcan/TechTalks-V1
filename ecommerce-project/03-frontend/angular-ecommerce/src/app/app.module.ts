@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ProductService } from './services/product.service';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { ProductCategoryMenuComponent } from './components/product-category-menu/product-category-menu.component';
@@ -33,6 +33,8 @@ function sendToLoginPage(oktaAuth: OktaAuth, injector: Injector){
 const oktaConfig = myAppConfig.oidc;
 const oktaAuth = new OktaAuth(oktaConfig);
 const routes: Routes = [
+  {path: 'order-history', component: OrderHistoryComponent, canActivate:[OktaAuthGuard],
+    data: {onAuthRequired: sendToLoginPage }}, // Okta çalışmadığı için kullanılmayacaktır.
   {path: 'members', component: MembersPageComponent, canActivate:[OktaAuthGuard],
     data: {onAuthRequired: sendToLoginPage }}, // Okta çalışmadığı için kullanılmayacaktır.
   // {path: 'order-history', component: OrderHistoryComponent}, //Bu route kullanılacaktır.
@@ -73,7 +75,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     OktaAuthModule
   ],
-  providers: [provideHttpClient(),
+  providers: [provideHttpClient(withInterceptorsFromDi()), 
     ProductService,
     {provide: OKTA_CONFIG, useValue: {oktaAuth}},
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}

@@ -8,22 +8,35 @@ import { environment } from '../../../src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthInterceptorService implements HttpInterceptor{
+export class AuthInterceptorService implements HttpInterceptor {
 
   constructor(@Inject(OKTA_AUTH) private oktaAuth: OktaAuth) { }
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return from(this.handleAccess(req,next));
+
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return from(this.handleAccess(request, next));
   }
-  private async handleAccess(req: HttpRequest<any>, next: HttpHandler): Promise<HttpEvent<any>> {
-    const securedEndpoints: string[] = [(environment.luv2shopApiUrl + '/orders')];
-    if(securedEndpoints.some(url => req.urlWithParams.includes(url))){
+
+  private async handleAccess(request: HttpRequest<any>, next: HttpHandler): Promise<HttpEvent<any>> {
+    
+    //Only add an access token for Secure Endpoints
+
+    const theEndpoint = environment.luv2shopApiUrl + 'orders';
+    const securedEndpoints = [theEndpoint];
+
+    if (securedEndpoints.some(url => request.urlWithParams.includes(url))) {
+      //get access token
       const accessToken = this.oktaAuth.getAccessToken();
-      req = req.clone({
-        setHeaders: {
-          Authorization: 'Bearer' + accessToken
+
+      //clone the request and add new header with access token
+      request = request.clone(
+        {
+          setHeaders: {
+            Authorization: 'Bearer ' + accessToken
+          }
         }
-      });
-    }    
-    return await lastValueFrom(next.handle(req));
+      );
+    }
+
+    return await lastValueFrom(next.handle(request));
   }
 }

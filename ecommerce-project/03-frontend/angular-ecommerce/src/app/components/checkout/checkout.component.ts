@@ -59,7 +59,7 @@ export class CheckoutComponent implements OnInit {
 
     this.reviewCartDetails();
 
-    const theEmail = this.storage.getItem('userEmail');
+    const theEmail = JSON.parse(this.storage.getItem('userEmail')!);
 
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
